@@ -8,12 +8,19 @@ import { toast } from 'react-toastify';
 
 
 const DiagnosticCenterLaboratories = () => {
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     labName: '',
     email: '',
     mobileNumber: ''
+  });
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    labName: '',
+    email: '',
+    mobileNumber: '',
   });
 
   const handleChange = (event) => {
@@ -27,11 +34,66 @@ const DiagnosticCenterLaboratories = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { firstName, lastName, labName, email, mobileNumber } = formData;
+    const newErrors = {
+      firstName: '',
+      lastName: '',
+      labName: '',
+      email: '',
+      mobileNumber: '',
+    };
+    const alphaOnly = /^[A-Za-z\s]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!firstName || !lastName || !email || !mobileNumber || !labName) {
-      toast.error("All fields are required.");
-      return;
+    let isValid = true;
+
+    // First Name
+    if (!firstName.trim()) {
+      newErrors.firstName = "First name is required";
+      isValid = false;
+    } else if (!alphaOnly.test(firstName)) {
+      newErrors.firstName = "First name should contain only letters";
+      isValid = false;
     }
+
+    // Last Name
+    if (!lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+      isValid = false;
+    } else if (!alphaOnly.test(lastName)) {
+      newErrors.lastName = "Last name should contain only letters";
+      isValid = false;
+    }
+
+    // Clinic Name
+    if (!labName.trim()) {
+      newErrors.labName = "Lab name is required";
+      isValid = false;
+    } else if (!alphaOnly.test(labName)) {
+      newErrors.labName = "Lab name should contain only letters";
+      isValid = false;
+    }
+
+    // Email
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    }
+    else if (!emailRegex.test(email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Mobile Number
+    if (!mobileNumber.trim()) {
+      newErrors.mobileNumber = "Mobile number is required";
+      isValid = false;
+    }
+    else if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+      newErrors.mobileNumber = "Enter a valid 10-digit Indian mobile number";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    if (!isValid) return;
 
     const reqBody = {
       name: `${firstName} ${lastName}`.trim(),
@@ -42,7 +104,7 @@ const DiagnosticCenterLaboratories = () => {
 
     try {
       const response = await axios.post(
-        `https://6d7d5268aaf1.ngrok-free.app/api/auth/register`,
+        `https://doctor-arsh-qms4.onrender.com/api/auth/register`,
         reqBody,
         {
           headers: {
@@ -60,6 +122,7 @@ const DiagnosticCenterLaboratories = () => {
           email: '',
           mobileNumber: ''
         });
+        setErrors({});
       } else {
         toast.error("Registration failed. Please try again.");
       }
@@ -69,147 +132,183 @@ const DiagnosticCenterLaboratories = () => {
   };
 
   const features = [
-    "Get listed on India’s first Reproductive Health platform",
-    "Accept online booking in one dashboard",
-    "Receive bookings of procedures related to reproductive health.",
-    "Increase revenue through virtual consultations",
-    "Assign flexible doctor time slots - online or in-person.",
-    "Manage patient records & consultations easily",
-    
+    "Get listed on India’s first Reproductive Health Platform.",
+    "Attract more patients through our online platform.",
+    "Accept lab test bookings online – home pickups or in-house.",
+    "Create visibility of your Diagnostic Centre/Lab via our platform through our Social Media pages.",
+    "Another stream to increase your revenue.",
+    "Get personalized assistance to manage listings, pricing, and promotions.",
+    "Manage patient records and bookings easily."
   ];
 
   return (
     <>
-     <title>Aarsh ReproHealth</title>
-        <div className="w-full bg-white">
-          <div className="flex flex-col md:flex-row">
-            {/* Left Side */}
-            <div className="w-full md:w-1/2 bg-gray-50  p-8 flex flex-col justify-center">
-              <div className="max-w-2xl mx-auto space-y-6">
-                <Image
-                  src={logo.logoImage}
-                  alt="logo"
-                  width={180}
-                  height={40}
-                  className="mb-6"
-                />
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-                  Join Our Panel of Trusted Specialist Clinic
-                </h1>
-                <p className="text-gray-600 text-base">
-                  
-     Become a part of Aarsh ReproHealth's Experts' Network to connect with patients, grow your presence and make a difference in people's lives.
-                </p>
-    
-                <div>
-                  <h3 className="text-lg font-semibold text-[#056873] uppercase mb-2">Why Join Us ?</h3>
-                  <ul className="space-y-3">
-                    {features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-3 text-sm text-gray-700">
-                        <div className='w-[5%]'>
-                          <CiCircleCheck className="text-[var(--lightBlue)] text-xl mr-2 mt-1" />
-                        </div>
-                        <div className='w-[90%]'>{feature}</div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+      <title>Aarsh ReproHealth</title>
+      <div className="w-full bg-white">
+        <div className="flex flex-col md:flex-row">
+          {/* Left Side */}
+          <div className="w-full md:w-1/2 bg-gray-50  p-8 flex flex-col justify-center">
+            <div className="max-w-2xl mx-auto space-y-6">
+              <Image
+                src={logo.logoImage}
+                alt="logo"
+                width={180}
+                height={40}
+                className="mb-6"
+              />
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+                Join Our Panel of Trusted Diagnostic Center & Laboratories
+              </h1>
+              <p className="text-gray-600 text-base">
+                Become a part of Aarsh ReproHealth's Experts' Network to connect with patients, grow your presence and make a difference in people's lives.
+              </p>
+
+              <div>
+                <h3 className="text-lg font-semibold text-[#056873] uppercase mb-2">Why Join Us ?</h3>
+                <ul className="space-y-3">
+                  {features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-3 text-sm text-gray-700">
+                      <div className='w-[5%]'>
+                        <CiCircleCheck className="text-[var(--lightBlue)] text-xl mr-2 mt-1" />
+                      </div>
+                      <div className='w-[90%]'>{feature}</div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-    
-            {/* Right Side - Form */}
-            <div className="w-full md:w-1/2 flex justify-center items-center bg-gradient-to-br from-[#54efff] to-[#056873] py-12">
-              <form
-                onSubmit={handleSubmit}
-                className="w-full max-w-lg rounded-lg space-y-6"
-              >
-                <h2 className="text-2xl font-semibold text-[#056873] text-center">
-                  Diagnostic Center & Laboratories Registration Form
-                </h2>
-                <p className="text-[#fff] text-base">
-                  
-                                Fill out the form to connect with patients, grow your practice, and be part of Aarsh ReproHealth’s expert network.
-    </p>
-    
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
-                      placeholder="Enter First Name"
-                      
-                    />
-                  </div>
-                  <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name <span className="text-red-500">*</span></label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
-                      placeholder="Enter Last Name"
-                      
-                    />
-                  </div>
-                </div>
-    
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lab Name <span className="text-red-500">*</span></label>
+          </div>
+
+          {/* Right Side - Form */}
+          {/* Right Side - Form */}
+          <div className="w-full md:w-1/2 flex justify-center items-center bg-gradient-to-br from-[#54efff] to-[#056873] py-12">
+            <form
+              // onSubmit={handleSubmit}
+              className="w-full max-w-lg sm:w-[80%] rounded-lg space-y-6"
+            >
+              <h2 className="text-2xl font-semibold text-[#056873] text-center">
+                Diagnostic Center & Laboratories Registration Form
+              </h2>
+              <p className="text-[#fff] text-base">
+
+                Fill out the form to connect with patients, grow your practice, and be part of Aarsh ReproHealth’s expert network.
+
+              </p>
+
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">First Name <span className="text-red-500">*</span></label>
                   <input
                     type="text"
-                    name="LabName"
-                    value={formData.LabName}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
-                    placeholder="Enter Lab Name"
-                 
+                    placeholder="Enter First Name"
+
                   />
+                  {errors.firstName && (
+                    <p className="text-sm text-red-500 mt-1">{errors.firstName}</p>
+                  )}
                 </div>
-    
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
+                <div className="w-full">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Last Name <span className="text-red-500">*</span></label>
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
-                    placeholder="Enter Email"
-                   
+                    placeholder="Enter Last Name"
+
                   />
+                  {errors.lastName && (
+                    <p className="text-sm text-red-500 mt-1">{errors.lastName}</p>
+                  )}
                 </div>
-    
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number <span className="text-red-500">*</span></label>
-                  <input
-                    type="tel"
-                    name="mobileNumber"
-                    value={formData.mobileNumber}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
-                    placeholder="Enter Mobile Number"
-                    
-                     maxLength={12}
-                  />
-                </div>
-    
-                <button
-                  type="submit"
-                  className="w-full bg-[#e67ba2] hover:bg-[#056873] text-white font-semibold py-3 rounded transition duration-300"
-                >
-                  Register
-                </button>
-              </form>
-            </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Lab Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  name="labName"
+                  value={formData.labName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
+                  placeholder="Enter Lab Name"
+
+                />
+                {errors.labName && (
+                  <p className="text-sm text-red-500 mt-1">{errors.labName}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email <span className="text-red-500">*</span></label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-[#54efff] outline-none"
+                  placeholder="Enter Email"
+
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  // pattern="[6-9]{1}[0-9]{9}"
+                  maxLength={10}
+                  name="mobileNumber"
+                  value={formData.mobileNumber}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow only digits (0–9)
+                    if (/^\d*$/.test(value)) {
+                      setFormData({ ...formData, mobileNumber: value });
+
+                      if (!/^[6-9]\d{9}$/.test(formData?.mobileNumber)) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          mobileNumber: "Please enter a valid 10-digit Indian mobile number",
+                        }));
+                        return;
+                      }
+
+                    }
+
+
+                  }}
+                  className={`w-full px-4 py-3 rounded border ${errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
+                    } focus:ring-2 focus:ring-[#54efff] outline-none`}
+                  placeholder="Enter 10-digit Indian Mobile Number"
+                />
+                {errors.mobileNumber && (
+                  <p className="text-sm text-red-500 mt-1">{errors.mobileNumber}</p>
+                )}
+
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-[#e67ba2] hover:bg-[#056873] text-white font-semibold py-3 rounded transition duration-300"
+              >
+                Register
+              </button>
+            </form>
           </div>
         </div>
+      </div>
     </>
-   
+
   )
 }
 
